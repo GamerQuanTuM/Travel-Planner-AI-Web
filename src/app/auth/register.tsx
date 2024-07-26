@@ -1,21 +1,32 @@
 "use client"
 
 import React, { useRef } from 'react'
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import axiosInstance from '@/lib/axiosInstance'
 
 const Register = () => {
     const formRef = useRef<HTMLFormElement>(null);
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
 
         const email = formData.get("email");
         const password = formData.get("password");
         const name = formData.get("name");
-        console.log(email, name, password);
+        try {
+            await axiosInstance.post("/auth/register", {
+                name, email, password
+            })
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 
     const handleButtonClick = () => {
@@ -31,8 +42,8 @@ const Register = () => {
                     Join us today! Create a new account to start planning your perfect trips and discover exciting places tailored to your preferences.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
-                <form id='register' ref={formRef} onSubmit={handleSubmit}>
+            <CardContent >
+                <form className="space-y-2" id='register' ref={formRef} onSubmit={handleSubmit}>
                     <div className="space-y-1">
                         <Label htmlFor="email">Email</Label>
                         <Input type="email" id="email" name='email' placeholder="Enter Your Email" />

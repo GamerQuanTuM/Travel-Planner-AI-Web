@@ -1,59 +1,117 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import { GenerationConfig, GoogleGenerativeAI } from "@google/generative-ai"
 import { BudgetType, TravelType } from "@prisma/client";
 
 
 import { prismadb } from "@/utils/prismadb";
-import sampleResponse from "@/constants/sampleData.json"
 import parseString from "@/lib/parseString";
 import getImagesFromGoogle from "@/lib/getPlacesImages";
+import getPrompt from "@/constants/getPrompt";
+import { Trip } from "@/typings/gemini";
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY as string);
+
+
+const determineTravelType = (person: string) => {
+    switch (person) {
+        case "Me":
+            return TravelType.SOLO;
+        case "Couple":
+            return TravelType.COUPLE;
+        case "Family":
+            return TravelType.FAMILY;
+        case "Friends":
+            return TravelType.FRIENDS;
+        default:
+            throw new Error("Person Field can't be empty");
+    }
+};
+
+const determineBudgetType = (budget: string) => {
+    switch (budget) {
+        case "Cheap":
+            return BudgetType.CHEAP;
+        case "Moderate":
+            return BudgetType.MODERATE;
+        case "Luxury":
+            return BudgetType.LUXURY;
+        default:
+            throw new Error("Budget Field can't be empty");
+    }
+};
+
+const generateNewTrip = async (prompt: string) => {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
+    const newTrip = [
+        {
+            role: "user",
+            parts: [{ text: prompt }],
+        },
+        {
+            role: "model",
+            parts: [{ text: result.response.text().replace(/\\n/g, '') }],
+        },
+    ];
+    return newTrip;
+};
+
+const fetchImages = async (parsedNewTrip: Trip) => {
+    const hotelsWithImages = await Promise.all(parsedNewTrip?.hotels?.map(async (hotel) => {
+        try {
+            hotel.hotelImageUrl = await getImagesFromGoogle(hotel?.hotelName) || hotel.hotelImageUrl;
+        } catch (error) {
+            console.error(`Failed to fetch image for hotel ${hotel?.hotelName}:`, error);
+        }
+        try {
+            hotel.placesNearby = await Promise.all(hotel?.placesNearby?.map(async (place: any) => {
+                try {
+                    place.placeNearbyImageUrl = await getImagesFromGoogle(place?.placeName) || place?.placeNearbyImageUrl;
+                } catch (error) {
+                    console.error(`Failed to fetch image for place ${place?.placeName}:`, error);
+                }
+                return place;
+            }));
+        } catch (error) {
+            console.error(`Failed to fetch images for places nearby hotel ${hotel?.hotelName}:`, error);
+        }
+        return hotel;
+    }));
+
+    const dailyPlanWithImages = await Promise.all(parsedNewTrip?.dailyPlan?.map(async (day) => {
+        day.placesToVisit = await Promise.all(day.placesToVisit.map(async (place: any) => {
+            try {
+                place.placesImageUrl = await getImagesFromGoogle(place?.placeName) || place.placesImageUrl;
+            } catch (error) {
+                console.error(`Failed to fetch image for place ${place?.placeName}:`, error);
+            }
+            return place;
+        }));
+        return day;
+    }));
+
+    return { hotelsWithImages, dailyPlanWithImages }
+}
+
+const getChatSessionSendMessage = async (generationConfig: GenerationConfig | undefined, itinerary: any, prompt: string) => {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const chatSession = model.startChat({
+        generationConfig,
+        history: itinerary as any,
+    });
+
+    await chatSession.sendMessage(prompt);
+}
 
 
 export async function POST(request: NextRequest) {
     const { id, email, budget, person, place, boarding, duration } = await request.json();
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const user = await prismadb.user.findFirst({
         where: { email }
     });
-
-    let travelType;
-    let budgetType;
-
-    switch (person) {
-        case "Me":
-            travelType = TravelType.SOLO
-            break;
-        case "Couple":
-            travelType = TravelType.COUPLE
-            break;
-        case "Family":
-            travelType = TravelType.FAMILY
-            break;
-        case "Friends":
-            travelType = TravelType.FRIENDS
-            break;
-        default:
-            console.log("Person Field cant be empty")
-    }
-
-    switch (budget) {
-        case "Cheap":
-            budgetType = BudgetType.CHEAP
-            break;
-        case "Moderate":
-            budgetType = BudgetType.MODERATE
-            break;
-        case "Luxury":
-            budgetType = BudgetType.LUXURY
-            break;
-        default:
-            console.log("Budget Field cant be empty")
-    }
-
+    const travelType = determineTravelType(person);
+    const budgetType = determineBudgetType(budget);
 
     const generationConfig = {
         temperature: 1,
@@ -67,36 +125,10 @@ export async function POST(request: NextRequest) {
 
     const coverImage = await getImagesFromGoogle(coverPlace)
 
-    const points = ` Make sure to match the key names exactly as specified: flight, hotels, dailyPlan, flightOptions, airline, flightNumber, departureAirport, arrivalAirport, price, bookingUrl, hotelName, hotelAddress, geoCoordinates, rating, description, placesNearby, placeName, placeDetails, ticketPricing, timeToTravel,
-    dailyPlan,placesToVisit,timeToSpend,placeName,description,price. The structure and naming should not deviate from this format. There should be 3 fields: flight,hotels,dailyPlan. Price should always be number in dollars. timeToTravel will always be in "x minutes walk." ticketPricing will be x or "Free".timeToSpend will be in range like 10AM - 12PM.Hotels should be at least 3.placesName should be specified that is available on google maps. Places to Visit will be at least 6.Hotels will be from ${place}. Generate at least 3 flight recommendation`
-
-    let prompt = `
-       Generate Travel Plan for Location: ${place}, for ${duration} Day and ${duration} Night from ${boarding} for ${person} with a ${budget} budget with Flight details, Flight Price with Booking URL, Hotel options list with Hotel Name, Hotel Address, Price, Geo Coordinates, Rating, Description, and Places to visit nearby with Place Name, Place Details, Geo Coordinates, Ticket Pricing, time to travel each of the location for 1 Day and 1 Night with each day plan for best time to visit in JSON format.
-
-    Please provide the response in the exact JSON format specified below. Do not change the key names or structure. Ensure that each section matches the example provided:
-    ${sampleResponse}
-    ${points}
-    `;
-
-    let otherPrompt = `Create another set of travel plan with same configurations and structure. Do not change the key names or structure. Ensure that each section matches the example provided:
-    ${sampleResponse}
-    ${points}
-    `
+    const { prompt, otherPrompt } = getPrompt({ place, duration, boarding, person, budget })
 
     if (user) {
-        const result = await model.generateContent(prompt);
-
-        const newTrip = [
-            {
-                role: "user",
-                parts: [{ text: prompt }],
-            },
-            {
-                role: "model",
-                parts: [{ text: result.response.text().replace(/\\n/g, '') }],
-            },
-        ];
-
+        const newTrip = await generateNewTrip(prompt);
         const parsed = parseString(newTrip[1]?.parts[0]?.text?.split("```json")[1]?.split("```")[0]);
 
         if (!parsed) {
@@ -112,40 +144,7 @@ export async function POST(request: NextRequest) {
         }
 
         try {
-            const hotelsWithImages = await Promise.all(parsedNewTrip?.hotels?.map(async (hotel: any) => {
-                try {
-                    hotel.hotelImageUrl = await getImagesFromGoogle(hotel?.hotelName) || hotel.hotelImageUrl;
-                } catch (error) {
-                    console.error(`Failed to fetch image for hotel ${hotel?.hotelName}:`, error);
-                }
-                try {
-                    hotel.placesNearby = await Promise.all(hotel?.placesNearby?.map(async (place: any) => {
-                        try {
-                            place.placeNearbyImageUrl = await getImagesFromGoogle(place?.placeName) || place?.placeNearbyImageUrl;
-                        } catch (error) {
-                            console.error(`Failed to fetch image for place ${place?.placeName}:`, error);
-                        }
-                        return place;
-                    }));
-                } catch (error) {
-                    console.error(`Failed to fetch images for places nearby hotel ${hotel?.hotelName}:`, error);
-                }
-                return hotel;
-            }));
-
-            const dailyPlanWithImages = await Promise.all(parsedNewTrip?.dailyPlan?.map(async (day: any) => {
-                day.placesToVisit = await Promise.all(day.placesToVisit.map(async (place: any) => {
-                    try {
-                        place.placesImageUrl = await getImagesFromGoogle(place?.placeName) || place.placesImageUrl;
-                    } catch (error) {
-                        console.error(`Failed to fetch image for place ${place?.placeName}:`, error);
-                    }
-                    return place;
-                }));
-                return day;
-            }));
-
-
+            const { dailyPlanWithImages, hotelsWithImages } = await fetchImages(parsedNewTrip)
 
             const updatedParsedNewTrip = {
                 ...parsedNewTrip,
@@ -164,31 +163,12 @@ export async function POST(request: NextRequest) {
                         ...newTrip
                     ];
 
-                    const chatSession = model.startChat({
-                        generationConfig,
-                        history: updatedHistory as any[],
-                    });
-
-                    await chatSession.sendMessage(otherPrompt);
-
+                    getChatSessionSendMessage(generationConfig, updatedHistory, otherPrompt)
 
                     const updatedItinerary = await prismadb.itinerary.update({
                         where: { id },
                         data: { history: updatedHistory, trip: updatedParsedNewTrip }
                     });
-
-                    const _history = chatSession.params?.history ?? [];
-                    const historyMap = _history.map(item => item.parts.map(part => part.text).join(' ')).join('\n');
-                    const updatedHistoryMap = updatedHistory.map(item => item.parts.map((part: any) => part.text).join(' ')).join('\n');
-
-                    // console.log('Chat Session History:', historyMap);
-                    // console.log('Updated Trip:', updatedHistoryMap);
-
-                    if (historyMap === updatedHistoryMap) {
-                        console.log('The history and updatedHistory are identical.');
-                    } else {
-                        console.log('The history and updatedHistory differ.');
-                    }
 
                     const { history, ...itineraryWithoutHistory } = updatedItinerary
 
@@ -212,12 +192,7 @@ export async function POST(request: NextRequest) {
                     },
                 });
 
-                const chatSession = model.startChat({
-                    generationConfig,
-                    history: newItinerary.history as any,
-                });
-
-                await chatSession.sendMessage(prompt);
+                getChatSessionSendMessage(generationConfig, newItinerary.history, prompt)
 
                 const { history, ...itineraryWithoutHistory } = newItinerary
 

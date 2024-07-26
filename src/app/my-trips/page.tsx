@@ -5,14 +5,15 @@ import { prismadb } from '@/utils/prismadb'
 import Header from '@/components/Header'
 import capitalizeFirstLetter from '@/lib/capitalizeFirstLetter'
 import DEFAULT_IMAGE from "@/assets/placeholder.jpeg"
+import { getSession } from '@/lib/dal'
 
 const MyTrips = async () => {
-  const userId = "clz0uy5ek0000kll3a3x2oftw"
+  const session = await getSession()
   // const default_Image = process.env.NEXT_PUBLIC_DEFAULT_IMAGE_URL as string
   const default_Image = DEFAULT_IMAGE
   const allTrips = await prismadb.itinerary.findMany({
     where: {
-      userId
+      userId: session?.id
     }, select: {
       id: true,
       createdAt: true,

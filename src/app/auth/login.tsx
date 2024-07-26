@@ -5,16 +5,25 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import axiosInstance from '@/lib/axiosInstance'
+import { useRouter } from 'next/navigation'
 
 const Login = () => {
-
     const formRef = useRef<HTMLFormElement>(null);
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const router = useRouter()
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const password = formData.get("password");
         const email = formData.get("email");
-        console.log(email, password);
+        try {
+            await axiosInstance.post("/auth/login", {
+                email, password
+            })
+            router.push("/");
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const handleButtonClick = () => {
@@ -30,8 +39,8 @@ const Login = () => {
                     Welcome back! Please log in to your account to access your personalized travel plans and continue exploring new destinations.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
-                <form id='login' onSubmit={handleSubmit} ref={formRef}>
+            <CardContent>
+                <form className="space-y-2" id='login' onSubmit={handleSubmit} ref={formRef}>
                     <div className="space-y-1">
                         <Label htmlFor="email">Email</Label>
                         <Input type="email" id="email" name='email' placeholder="Enter Your Email" />

@@ -8,6 +8,7 @@ import Card from './card'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import axiosInstance from '@/lib/axiosInstance'
+import { useSession } from '@/context/authContext'
 
 type Person = "Me" | "Couple" | "Family" | "Friends" | undefined
 type Budget = "Cheap" | "Moderate" | "Luxury" | undefined
@@ -15,6 +16,7 @@ type Budget = "Cheap" | "Moderate" | "Luxury" | undefined
 const CreateTrip = () => {
 
     const router = useRouter()
+    const { session } = useSession()
 
     const [budget, setBudget] = useState<Budget>(undefined)
     const [person, setPerson] = useState<Person>(undefined)
@@ -24,12 +26,10 @@ const CreateTrip = () => {
     const [duration, setDuration] = useState<string>("0")
     const [loading, setLoading] = useState(false)
 
-    const handlePlaceSelected = (place: google.maps.places.PlaceResult | undefined) => {
-        // console.log('Selected Place:', place?.formatted_address);
+    const handlePlaceSelected = (place: { formatted_address: string } | undefined) => {
         setPlace(place?.formatted_address)
     };
-    const handleBoardingSelected = (place: google.maps.places.PlaceResult | undefined) => {
-        // console.log('Selected Place:', place?.formatted_address);
+    const handleBoardingSelected = (place: { formatted_address: string } | undefined) => {
         setBoarding(place?.formatted_address)
     };
 
@@ -61,7 +61,7 @@ const CreateTrip = () => {
         try {
             setLoading(true)
             const res = await axiosInstance.post("/gemini", {
-                email: "john.doe@example.com",
+                email: session?.email,
                 budget,
                 person,
                 place,

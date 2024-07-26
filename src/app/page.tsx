@@ -4,7 +4,7 @@ import Image from 'next/image'
 import CreateTripNavigateButton from './create-trip-naviagte-button'
 import Header from '@/components/Header'
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className='h-screen w-screen'>
       <Header />
