@@ -1,0 +1,198 @@
+{
+    "trip_details": {
+        "destination": "Busan, South Korea",
+        "duration": "1 Day & 1 Night",
+        "budget": "Luxury",
+        "travelers": "Family"
+    },
+    "flight": {
+        "flightOptions": [
+            {
+                "airline": "Korean Air",
+                "flightNumber": "KE1234",
+                "departureAirport": "Incheon International Airport (ICN)",
+                "arrivalAirport": "Gimhae International Airport (PUS)",
+                "price": "$500",
+                "bookingUrl": "https://www.koreanair.com/"
+            },
+            {
+                "airline": "Asiana Airlines",
+                "flightNumber": "OZ1234",
+                "departureAirport": "Incheon International Airport (ICN)",
+                "arrivalAirport": "Gimhae International Airport (PUS)",
+                "price": "$450",
+                "bookingUrl": "https://www.flyasiana.com/"
+            }
+        ]
+    },
+    "hotel": [
+        {
+            "hotelName": "Park Hyatt Busan",
+            "hotelAddress": "100, Haeundaehaebyeon-ro, Haeundae-gu, Busan, South Korea",
+            "price": "$500+",
+            "geoCoordinates": "35.1597, 129.1380",
+            "rating": 4.5,
+            "description": "Luxury hotel with stunning ocean views, multiple dining options, a spa, and an infinity pool.",
+            "placesNearby": [
+                {
+                    "placeName": "Haeundae Beach",
+                    "placeDetails": "Popular beach with white sand and clear water.",
+                    "geoCoordinates": "35.1632, 129.1366",
+                    "ticketPricing": "Free",
+                    "timeToTravel": "5 minutes walk"
+                },
+                {
+                    "placeName": "The Bay 101",
+                    "placeDetails": "Modern waterfront complex with restaurants, shops, and entertainment.",
+                    "geoCoordinates": "35.1603, 129.1428",
+                    "ticketPricing": "Free",
+                    "timeToTravel": "10 minutes walk"
+                }
+            ]
+        },
+        {
+            "hotelName": "Grand Hyatt Busan",
+            "hotelAddress": "100, Gwanganhaebeon-ro, Haeundae-gu, Busan, South Korea",
+            "price": "$400+",
+            "geoCoordinates": "35.1660, 129.1451",
+            "rating": 4.0,
+            "description": "Elegant hotel with panoramic city views, a rooftop pool, and a variety of dining options.",
+            "placesNearby": [
+                {
+                    "placeName": "Gwangan Bridge",
+                    "placeDetails": "Iconic bridge spanning the Gwangan Bay, offering stunning nighttime views.",
+                    "geoCoordinates": "35.1630, 129.1532",
+                    "ticketPricing": "Free",
+                    "timeToTravel": "15 minutes walk"
+                },
+                {
+                    "placeName": "Busan Cinema Center",
+                    "placeDetails": "Unique architectural landmark with an outdoor cinema and event space.",
+                    "geoCoordinates": "35.1554, 129.1169",
+                    "ticketPricing": 10,
+                    "timeToTravel": "20 minutes drive"
+                }
+            ]
+        },
+        {
+            "hotelName": "Hilton Busan",
+            "hotelAddress": "100, Haeundaehaebyeon-ro, Haeundae-gu, Busan, South Korea",
+            "price": "$350+",
+            "geoCoordinates": "35.1621, 129.1388",
+            "rating": 4.2,
+            "description": "Modern hotel with direct access to Haeundae Beach, a rooftop pool, and a variety of dining options.",
+            "placesNearby": [
+                {
+                    "placeName": "Haeundae Beach",
+                    "placeDetails": "Popular beach with white sand and clear water.",
+                    "geoCoordinates": "35.1632, 129.1366",
+                    "ticketPricing": "Free",
+                    "timeToTravel": "5 minutes walk"
+                },
+                {
+                    "placeName": "Marine City",
+                    "placeDetails": "Luxury residential and commercial complex with waterfront promenades and entertainment.",
+                    "geoCoordinates": "35.1583, 129.1345",
+                    "ticketPricing": 5,
+                    "timeToTravel": "10 minutes walk"
+                }
+            ]
+        }
+    ],
+    "dailyPlan": [
+        {
+            "day": "Day 1",
+            "placesToVisit": [
+                {
+                    "placeName": "Gimhae International Airport (PUS)",
+                    "description": "Arrival airport in Busan.",
+                    "geoCoordinates": "35.1796, 129.0756",
+                    "timeToSpend": "9AM - 10AM",
+                    "price": "Free"
+                },
+                {
+                    "placeName": "Hotel (Park Hyatt Busan, Grand Hyatt Busan, or Hilton Busan)",
+                    "description": "Luxury hotel accommodation.",
+                    "geoCoordinates": "35.1597, 129.1380",
+                    "timeToSpend": "10AM - 12PM",
+                    "price": "$350-$500+"
+                },
+                {
+                    "placeName": "Gwangan Bridge",
+                    "description": "Iconic bridge spanning the Gwangan Bay with stunning views.",
+                    "geoCoordinates": "35.1630, 129.1532",
+                    "timeToSpend": "12PM - 1PM",
+                    "price": "Free"
+                },
+                {
+                    "placeName": "Haeundae Beach",
+                    "description": "Popular beach with white sand and clear water.",
+                    "geoCoordinates": "35.1632, 129.1366",
+                    "timeToSpend": "3PM - 6PM",
+                    "price": "Free"
+                },
+                {
+                    "placeName": "Dinner at a restaurant overlooking the ocean",
+                    "description": "Enjoy a meal with ocean views.",
+                    "geoCoordinates": "35.1632, 129.1366",
+                    "timeToSpend": "9AM - 12PM",
+                    "price": "$50-$100"
+                },
+                {
+                    "placeName": "Busan Cinema Center or Waterfront",
+                    "description": "Catch a performance or enjoy a walk.",
+                    "geoCoordinates": "35.1554, 129.1169",
+                    "timeToSpend": "1PM - 2PM",
+                    "price": "$10+ (Busan Cinema Center)"
+                }
+            ]
+        },
+        {
+            "day": "Day 2",
+            "placesToVisit": [
+                {
+                    "placeName": "Hotel Breakfast",
+                    "description": "Lavish breakfast at the hotel.",
+                    "geoCoordinates": "35.1597, 129.1380",
+                    "timeToSpend": "9AM - 9:30AM",
+                    "price": "Included in hotel stay"
+                },
+                {
+                    "placeName": "Gamcheon Culture Village",
+                    "description": "Colorful hillside neighborhood with unique art installations.",
+                    "geoCoordinates": "35.0971, 129.0370",
+                    "timeToSpend": "9:30AM - 10:30A.M",
+                    "price": "Free"
+                },
+                {
+                    "placeName": "Traditional Korean Restaurant in Gamcheon",
+                    "description": "Lunch at a traditional Korean restaurant.",
+                    "geoCoordinates": "35.0971, 129.0370",
+                    "timeToSpend": "10:30AM - 12PM",
+                    "price": "$20-$40"
+                },
+                {
+                    "placeName": "Jagalchi Fish Market",
+                    "description": "One of the largest seafood markets in Korea.",
+                    "geoCoordinates": "35.0997, 129.0366",
+                    "timeToSpend": "12PM - 3PM",
+                    "price": "Free"
+                },
+                {
+                    "placeName": "Shinsegae Centum City",
+                    "description": "Largest department store in the world.",
+                    "geoCoordinates": "35.1681, 129.1312",
+                    "timeToSpend": "3PM - 3:30PM",
+                    "price": "Free (shopping expenses additional)"
+                },
+                {
+                    "placeName": "Gimhae International Airport (PUS)",
+                    "description": "Departure from Busan.",
+                    "geoCoordinates": "35.1796, 129.0756",
+                    "timeToSpend": "3:30PM - 6PM",
+                    "price": "Free"
+                }
+            ]
+        }
+    ]
+}
