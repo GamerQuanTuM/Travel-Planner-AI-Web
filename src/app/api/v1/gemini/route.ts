@@ -61,29 +61,29 @@ const fetchImages = async (parsedNewTrip: Trip) => {
         try {
             hotel.hotelImageUrl = await getImagesFromGoogle(hotel?.hotelName) || hotel.hotelImageUrl;
         } catch (error) {
-            console.error(`Failed to fetch image for hotel ${hotel?.hotelName}:`, error);
+            console.error(`Failed to fetch image for hotel ${hotel?.hotelName}:`);
         }
         try {
-            hotel.placesNearby = await Promise.all(hotel?.placesNearby?.map(async (place: any) => {
+            hotel.placesNearby = await Promise.all(hotel?.placesNearby?.map(async (place) => {
                 try {
-                    place.placeNearbyImageUrl = await getImagesFromGoogle(place?.placeName) || place?.placeNearbyImageUrl;
+                    place.placeImageUrl = await getImagesFromGoogle(place?.placeName) || place?.placeImageUrl;
                 } catch (error) {
-                    console.error(`Failed to fetch image for place ${place?.placeName}:`, error);
+                    console.error(`Failed to fetch image for place ${place?.placeName}:`);
                 }
                 return place;
             }));
         } catch (error) {
-            console.error(`Failed to fetch images for places nearby hotel ${hotel?.hotelName}:`, error);
+            console.error(`Failed to fetch images for places nearby hotel ${hotel?.hotelName}:`);
         }
         return hotel;
     }));
 
     const dailyPlanWithImages = await Promise.all(parsedNewTrip?.dailyPlan?.map(async (day) => {
-        day.placesToVisit = await Promise.all(day.placesToVisit.map(async (place: any) => {
+        day.placesToVisit = await Promise.all(day.placesToVisit.map(async (place) => {
             try {
                 place.placesImageUrl = await getImagesFromGoogle(place?.placeName) || place.placesImageUrl;
             } catch (error) {
-                console.error(`Failed to fetch image for place ${place?.placeName}:`, error);
+                console.error(`Failed to fetch image for place ${place?.placeName}:`);
             }
             return place;
         }));
@@ -108,8 +108,23 @@ export async function POST(request: NextRequest) {
     const { id, email, budget, person, place, boarding, duration } = await request.json();
 
     const user = await prismadb.user.findFirst({
-        where: { email }
+        where: { email },
+        select: {
+            itinerary: true,
+            id: true,
+            email: true,
+            createdAt: true,
+            updatedAt: true,
+            name: true,
+        }
     });
+
+    const tripArray = user?.itinerary.length as number
+    console.log(tripArray)
+
+    if (tripArray > 3) {
+        return NextResponse.json({ message: "You have reached the maximum limit of 3 itineraries." }, { status: 403 })
+    }
     const travelType = determineTravelType(person);
     const budgetType = determineBudgetType(budget);
 

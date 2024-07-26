@@ -51,8 +51,8 @@ const Login = () => {
                     </div>
                 </form>
             </CardContent>
-            <CardFooter>
-                <Button id='login' onClick={handleButtonClick}>Save changes</Button>
+            <CardFooter className='flex justify-center mx-auto'>
+                <Button id='login' onClick={handleButtonClick}>Login</Button>
             </CardFooter>
         </Card>
     )

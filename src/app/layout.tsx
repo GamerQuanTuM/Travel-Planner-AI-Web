@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
+
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css";
 import { Providers } from "@/lib/authProvider";
 
@@ -18,7 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Toaster />
+          <main>
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

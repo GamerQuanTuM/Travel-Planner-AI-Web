@@ -54,7 +54,7 @@ export async function verifySession() {
         redirect('/auth');
     }
 
-    return { isAuth: true, userId: session.userId };
+    return { isAuth: true, userId: session && session.userId as string };
 }
 
 export async function updateSession() {

@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import axiosInstance from '@/lib/axiosInstance'
 import { useSession } from '@/context/authContext'
+import { useToast } from '@/components/ui/use-toast'
+import { isAxiosError } from 'axios'
 
 type Person = "Me" | "Couple" | "Family" | "Friends" | undefined
 type Budget = "Cheap" | "Moderate" | "Luxury" | undefined
@@ -17,43 +19,84 @@ const CreateTrip = () => {
 
     const router = useRouter()
     const { session } = useSession()
+    const { toast } = useToast()
 
     const [budget, setBudget] = useState<Budget>(undefined)
     const [person, setPerson] = useState<Person>(undefined)
     const [place, setPlace] = useState<string | undefined>(undefined)
     const [boarding, setBoarding] = useState<string | undefined>(undefined)
-    const [error, setError] = useState<string | null>(null)
     const [duration, setDuration] = useState<string>("0")
     const [loading, setLoading] = useState(false)
 
+    const [placeError, setPlaceError] = useState<string | null>(null)
+    const [boardingError, setBoardingError] = useState<string | null>(null)
+    const [durationError, setDurationError] = useState<string | null>(null)
+    const [budgetError, setBudgetError] = useState<string | null>(null)
+    const [personError, setPersonError] = useState<string | null>(null)
+
     const handlePlaceSelected = (place: { formatted_address: string } | undefined) => {
         setPlace(place?.formatted_address)
-    };
+        setPlaceError(null)
+    }
     const handleBoardingSelected = (place: { formatted_address: string } | undefined) => {
         setBoarding(place?.formatted_address)
-    };
+        setBoardingError(null)
+    }
 
     const handleSelectedBudgetCard = (budget: Budget) => {
         setBudget(budget)
+        setBudgetError(null)
     }
 
     const handleSelectedPersonCard = (person: Person) => {
         setPerson(person)
+        setPersonError(null)
     }
 
     const handleGenerateTrip = async () => {
-        setError(null)
+        let hasError = false
 
-        if (budget === undefined || person === undefined) {
-            setError("Travel Budget Field or Travel Companion Field can't be empty")
-            return
+        if (!place || place === "") {
+            setPlaceError("Place field can't be empty")
+            toast({
+                title: "Place field can't be empty"
+            })
+            hasError = true
         }
-        if (!place || place === "" || !boarding || boarding === "") {
-            setError("Place field can't be empty")
-            return
+
+        if (!boarding || boarding === "") {
+            setBoardingError("Boarding field can't be empty")
+            toast({
+                title: "Boarding field can't be empty"
+            })
+            hasError = true
         }
+
         if (duration === "0" || !duration) {
-            setError("Travel Duration field can't be empty")
+            setDurationError("Travel Duration field can't be empty")
+            toast({
+                title: "Travel Duration field can't be empty"
+            })
+            hasError = true
+        }
+
+        if (budget === undefined) {
+            setBudgetError("Travel Budget Field can't be empty")
+            toast({
+                title: "Travel Budget Field can't be empty"
+            })
+            hasError = true
+        }
+
+        if (person === undefined) {
+            setPersonError("Travel Companion Field can't be empty")
+            toast({
+                title: "Travel Companion Field can't be empty"
+            })
+            hasError = true
+        }
+
+        if (hasError) {
             return
         }
 
@@ -75,14 +118,20 @@ const CreateTrip = () => {
             const id = trip.message.id
             router.push(`/trip/${id}`);
             setLoading(false)
-            setError(null)
         } catch (error) {
             setLoading(false)
-            setError(error as any)
-            console.log(error)
+            if (isAxiosError(error) && error.response && error.response.status === 403) {
+                toast({
+                    title: "You have reached the maximum limit of 3 itineraries."
+                });
+            } else {
+                toast({
+                    title: "An error occurred while generating the trip."
+                });
+            }
+            console.error('Error generating trip:', error);
         }
     }
-
 
     return (
         <div className='w-screen h-screen overflow-x-hidden'>
@@ -95,15 +144,21 @@ const CreateTrip = () => {
                     <div className='flex flex-col gap-3'>
                         <label className='text-xl font-medium'>What is destination of choice?</label>
                         <Autocomplete onPlaceSelected={handlePlaceSelected} />
+                        {placeError && <p className='text-red-500 text-sm font-normal mt-1'>{placeError}</p>}
                     </div>
                     <div className='flex flex-col gap-3'>
                         <label className='text-xl font-medium'>What is origin of travel?</label>
                         <Autocomplete onPlaceSelected={handleBoardingSelected} />
+                        {boardingError && <p className='text-red-500 text-sm font-normal mt-1'>{boardingError}</p>}
                     </div>
 
                     <div className='flex flex-col gap-3'>
                         <label className='text-xl font-medium'>How many days are you planning your trip?</label>
-                        <Input onChange={(e) => setDuration(e.target.value)} placeholder='Example:3' type='number' className='border-[#e5e7eb] border-[1px]' />
+                        <Input onChange={(e) => {
+                            setDuration(e.target.value)
+                            setDurationError(null)
+                        }} placeholder='Example:3' type='number' className='border-[#e5e7eb] border-[1px]' />
+                        {durationError && <p className='text-red-500 text-sm font-normal mt-1'>{durationError}</p>}
                     </div>
 
                     <div className='flex flex-col gap-3 w-full'>
@@ -119,6 +174,7 @@ const CreateTrip = () => {
                                 <Card icon='💸' heading='Luxury' subHeading='Dont worry about cost' isActive={budget === "Luxury"} />
                             </div>
                         </div>
+                        {budgetError && <p className='text-red-500 text-sm font-normal mt-1'>{budgetError}</p>}
                     </div>
 
 
@@ -138,6 +194,7 @@ const CreateTrip = () => {
                                 <Card icon='⛵' heading='Friends' subHeading='A bunch of thrill-seekers' isActive={person === "Friends"} />
                             </div>
                         </div>
+                        {personError && <p className='text-red-500 text-sm font-normal mt-1'>{personError}</p>}
                     </div>
 
                     <div className='flex justify-end w-full'>

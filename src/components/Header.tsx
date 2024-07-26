@@ -26,7 +26,7 @@ const Header = ({ show = true }: { show?: boolean }) => {
             {show &&
                 (!session ?
                     <div>
-                        <Button variant="default">Sign In</Button>
+                        <Button onClick={() => router.push("/auth")} variant="default">Sign In</Button>
                     </div>
                     :
                     <div className='flex gap-x-3'>

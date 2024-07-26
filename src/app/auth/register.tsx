@@ -58,8 +58,8 @@ const Register = () => {
                     </div>
                 </form>
             </CardContent>
-            <CardFooter>
-                <Button onClick={handleButtonClick} id='register'>Save password</Button>
+            <CardFooter className='flex justify-center mx-auto'>
+                <Button onClick={handleButtonClick} id='register'>Right</Button>
             </CardFooter>
         </Card>
     )

@@ -30,6 +30,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     setLoading(false);
                 } else {
                     const { data } = await axiosInstance.get("/get-session");
+                    console.log(data.message)
                     setSession(data.message);
                     localStorage.setItem('session', JSON.stringify(data.message));
                     setLoading(false);

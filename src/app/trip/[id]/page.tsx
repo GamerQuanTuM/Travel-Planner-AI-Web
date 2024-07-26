@@ -104,7 +104,7 @@ const Trip = async ({ params }: { params: { id: string } }) => {
                 <div className='mt-5'>
                     {trip?.dailyPlan.map((plan: DailyPlan, i: number) => (
                         <div key={i} className=''>
-                            <h1 className='text-xl font-semibold'>Day {plan.day}</h1>
+                            <h1 className='text-xl font-semibold'>Day {plan?.day}</h1>
                             <div className='my-3 grid grid-cols-2 gap-x-7 gap-y-3'>
                                 {plan.placesToVisit.map((place: PlacesToVisit, j: number) => {
                                     const [startTime, endTime] = place?.timeToSpend?.split(' - ');
