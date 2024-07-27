@@ -25,7 +25,6 @@ const MyTrips = async () => {
     }
   })
 
-  console.log(allTrips);
   return (
     <div className='w-screen h-screen overflow-x-hidden'>
       <Header />
