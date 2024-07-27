@@ -5,6 +5,7 @@ import { prismadb } from "@/utils/prismadb";
 export async function GET(request: NextRequest) {
     const origin = request.headers.get('origin')
     const session = await verifySession();
+    console.log(session)
     if (!session) {
         return NextResponse.json({ message: "Session not found" }, { status: 404 });
     }

@@ -1,9 +1,9 @@
 import axios from "axios";
-const prodURL = "https://travel-planner-ai-web.onrender.com/api/v1";
-const devURL = "http://localhost:3000/api/v1"
+const prodURL = "";
+const devURL = "http://localhost:3000"
 
 const axiosInstance = axios.create({
-    baseURL: prodURL
+    baseURL: `${devURL}/api/v1`
 })
 
 export default axiosInstance

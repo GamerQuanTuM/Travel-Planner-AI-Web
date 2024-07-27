@@ -28,10 +28,12 @@ const Register = () => {
         const name = formData.get("name");
         setLoading(false)
         try {
-            await axiosInstance.post("/auth/register", {
+            const register = await axiosInstance.post("/auth/register", {
                 name, email, password
             })
             await refreshSession();
+
+            console.log(register?.data?.message)
             setLoading(false)
             if (session) {
                 router.push("/");

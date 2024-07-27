@@ -24,10 +24,11 @@ const Login = () => {
         const email = formData.get("email");
         setLoading(true)
         try {
-            await axiosInstance.post("/auth/login", {
+            const res = await axiosInstance.post("/auth/login", {
                 email, password
             })
             await refreshSession();
+            console.log(res?.data.message)
             setLoading(false);
             if (session) {
                 router.push("/");
