@@ -8,8 +8,7 @@ import {
 import Login from "./login"
 import Register from "./register"
 
-
-export async function Auth() {
+function Auth() {
     return (
         <div className="w-screen h-screen">
             <Header show={false} />
