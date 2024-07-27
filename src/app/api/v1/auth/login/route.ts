@@ -34,14 +34,7 @@ export async function POST(request: NextRequest) {
                 session
             }
 
-            return NextResponse.json({ message: user }, {
-                status: 200, 
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                },
-            })
+            return NextResponse.json({ message: user }, { status: 200 })
         } else {
             return NextResponse.json({ message: "Password didn't match" }, { status: 403 })
         }
