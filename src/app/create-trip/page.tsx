@@ -100,7 +100,6 @@ const CreateTrip = () => {
             return
         }
 
-        // If no errors, log the trip details
         try {
             setLoading(true)
             const res = await axiosInstance.post("/gemini", {

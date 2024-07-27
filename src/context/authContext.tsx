@@ -6,12 +6,14 @@ interface SessionContextType {
     session: Session | null;
     loading: boolean;
     error: string | null;
+    refreshSession: () => Promise<void>;
 }
 
 const defaultContext: SessionContextType = {
     session: null,
     loading: true,
     error: null,
+    refreshSession: async () => {},
 };
 
 const SessionContext = createContext<SessionContextType>(defaultContext);
@@ -21,31 +23,30 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchSession = async () => {
-            try {
-                const cachedSession = localStorage.getItem('session');
-                if (cachedSession) {
-                    setSession(JSON.parse(cachedSession));
-                    setLoading(false);
-                } else {
-                    const { data } = await axiosInstance.get("/get-session");
-                    console.log(data.message)
-                    setSession(data.message);
-                    localStorage.setItem('session', JSON.stringify(data.message));
-                    setLoading(false);
-                }
-            } catch (err) {
-                setError('Failed to fetch session');
-                setLoading(false);
+    const fetchSession = async () => {
+        setLoading(true);
+        try {
+            const cachedSession = localStorage.getItem('session');
+            if (cachedSession) {
+                setSession(JSON.parse(cachedSession));
+            } else {
+                const { data } = await axiosInstance.get("/get-session");
+                setSession(data.message);
+                localStorage.setItem('session', JSON.stringify(data.message));
             }
-        };
+        } catch (err) {
+            setError('Failed to fetch session');
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchSession();
     }, []);
 
     return (
-        <SessionContext.Provider value={{ session, loading, error }}>
+        <SessionContext.Provider value={{ session, loading, error, refreshSession: fetchSession }}>
             {children}
         </SessionContext.Provider>
     );

@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 
 import Logo from "@/assets/travel-ai-extended.png"
@@ -8,14 +8,41 @@ import { Button } from './ui/button'
 import { useRouter } from 'next/navigation'
 import { useSession } from '@/context/authContext'
 import { Avatar, AvatarFallback } from './ui/avatar'
+import axios from 'axios'
+import axiosInstance from '@/lib/axiosInstance'
+import { useToast } from './ui/use-toast'
 
 const Header = ({ show = true }: { show?: boolean }) => {
     const router = useRouter()
-    const { session, loading } = useSession();
+    const { session } = useSession();
+    const { toast } = useToast()
+
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState("")
 
     if (loading) {
-        <div>Loading...</div>
+        console.log("Loading")
+        return
     }
+
+    const handleLogout = async () => {
+        setLoading(false)
+        try {
+            await axiosInstance.get("/auth/logout");
+            localStorage.removeItem("session")
+            router.push("/auth")
+            setLoading(false)
+        } catch (error: any) {
+            console.log(error.response.data)
+            setError(error.response.data)
+            toast({
+                title: error.response.data
+            })
+            setLoading(false)
+        }
+    }
+
+
     return (
         <header className='h-[12%] border border-b-2 flex justify-between items-center px-12'>
             <button
@@ -26,7 +53,7 @@ const Header = ({ show = true }: { show?: boolean }) => {
             {show &&
                 (!session ?
                     <div>
-                        <Button onClick={() => router.push("/auth")} variant="default">Sign In</Button>
+                        <Button className='cursor-pointer' onClick={() => router.push("/auth")} variant="default">Sign In</Button>
                     </div>
                     :
                     <div className='flex gap-x-3'>
@@ -34,7 +61,7 @@ const Header = ({ show = true }: { show?: boolean }) => {
                         <Button onClick={() => router.push("/my-trips")} className='rounded-full' variant="outline">My Trips</Button>
 
                         <Avatar>
-                            <AvatarFallback className='bg-orange-600 text-white text-xl'>{session?.name?.charAt(0)}</AvatarFallback>
+                            <AvatarFallback onClick={() => handleLogout()} className='bg-orange-600 text-white text-xl cursor-pointer'>{session?.name?.charAt(0)}</AvatarFallback>
                         </Avatar>
                     </div>
                 )

@@ -1,12 +1,14 @@
 import React from 'react'
-import Image from 'next/image'
 
 import CreateTripNavigateButton from './create-trip-naviagte-button'
 import Header from '@/components/Header'
+import Carousel from '@/components/Carousel'
+import Footer from '@/components/Footer'
+import Feedback from '@/components/Feedback'
 
 export default async function Home() {
   return (
-    <div className='h-screen w-screen'>
+    <div className='h-screen w-screen overflow-x-hidden'>
       <Header />
       <main className='my-10 w-full'>
         <h1 className='text-6xl font-bold text-[#F56551] text-center'>Discover Your Next Adventure with AI:</h1>
@@ -14,10 +16,14 @@ export default async function Home() {
         <h5 className='text-lg font-bold text-center text-[#747680] mt-12'>Your personal trip planner and travel curator, creating custom itineraries tailored to your interests and budget</h5>
         <CreateTripNavigateButton />
 
-        <div className='mt-28 flex justify-center'>
-          <Image src={"https://aitrip.tubeguruji.com/landing.png"} alt='Logo.png' height={500} width={500} className='' />
+        <div className='mt-10 flex justify-center mx-2'>
+            <Carousel />
+        </div>
+        <div className='mt-10'>
+          <Feedback />
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

@@ -51,3 +51,11 @@ model Itinerary {
   User         User?      @relation(fields: [userId], references: [id])
   userId       String?
 }
+
+model Feedback {
+  id        String   @id @default(cuid())
+  email     String
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

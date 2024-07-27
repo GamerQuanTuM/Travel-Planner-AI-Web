@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     try {
         const user = await prismadb.user.findFirst({
             where: {
-                id: session?.userId
+                id: session?.userId as string
             },
             select: {
                 email: true,
