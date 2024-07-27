@@ -37,10 +37,10 @@ const Register = () => {
                 router.push("/");
             }
         } catch (error: any) {
-            console.log(error.response.data)
-            setError(error.response.data)
+            console.log(error?.response?.data)
+            setError(error?.response?.data)
             toast({
-                title: error.response.data?.message || "Something went wrong"
+                title: error?.response?.data?.message || "Something went wrong"
             })
             setLoading(false)
         }
