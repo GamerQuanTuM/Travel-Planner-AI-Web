@@ -6,10 +6,20 @@ import { cookies } from 'next/headers';
 const protectedRoutes = ["/my-trips", "/create-trip", "/trip/*"];
 const publicRoutes = ['/auth', "/"];
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:3000/api/v1',
+  'http://localhost:5173/api/v1',
+  'https://travel-planner-ai-web.onrender.com',
+  'https://travel-planner-ai-web.onrender.com/api/v1'
+]
+
 
 export default async function middleware(req: NextRequest) {
   // 2. Check if the current route is protected or public
   const path = req.nextUrl.pathname;
+  const origin = req.headers.get("origin")
   const isProtectedRoute = protectedRoutes.includes(path) || path.startsWith('/trip');
   const isPublicRoute = publicRoutes.includes(path);
 
@@ -38,7 +48,20 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/', req.nextUrl));
   }
 
-  
+  if (origin && !allowedOrigins.includes(origin)) {
+    return new NextResponse(null, {
+      status: 400,
+      statusText: "Bad Requset",
+      headers: {
+        'Content-Type': 'text/plain'
+      }
+    })
+  }
 
   return NextResponse.next();
+}
+
+
+export const config = {
+  matcher: '/api/:path*'
 }

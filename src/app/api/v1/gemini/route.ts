@@ -60,19 +60,19 @@ const fetchImages = async (parsedNewTrip: Trip) => {
     const hotelsWithImages = await Promise.all(parsedNewTrip?.hotels?.map(async (hotel) => {
         try {
             hotel.hotelImageUrl = await getImagesFromGoogle(hotel?.hotelName) || hotel.hotelImageUrl;
-        } catch (error:any) {
+        } catch (error: any) {
             console.error(`Failed to fetch image for hotel ${hotel?.hotelName}:`);
         }
         try {
             hotel.placesNearby = await Promise.all(hotel?.placesNearby?.map(async (place) => {
                 try {
                     place.placeImageUrl = await getImagesFromGoogle(place?.placeName) || place?.placeImageUrl;
-                } catch (error:any) {
+                } catch (error: any) {
                     console.error(`Failed to fetch image for place ${place?.placeName}:`);
                 }
                 return place;
             }));
-        } catch (error:any) {
+        } catch (error: any) {
             console.error(`Failed to fetch images for places nearby hotel ${hotel?.hotelName}:`);
         }
         return hotel;
@@ -82,7 +82,7 @@ const fetchImages = async (parsedNewTrip: Trip) => {
         day.placesToVisit = await Promise.all(day.placesToVisit.map(async (place) => {
             try {
                 place.placesImageUrl = await getImagesFromGoogle(place?.placeName) || place.placesImageUrl;
-            } catch (error:any) {
+            } catch (error: any) {
                 console.error(`Failed to fetch image for place ${place?.placeName}:`);
             }
             return place;
@@ -105,6 +105,7 @@ const getChatSessionSendMessage = async (generationConfig: GenerationConfig | un
 
 
 export async function POST(request: NextRequest) {
+    const origin = request.headers.get('origin')
     const { id, email, budget, person, place, boarding, duration } = await request.json();
 
     const user = await prismadb.user.findFirst({
@@ -187,7 +188,12 @@ export async function POST(request: NextRequest) {
 
                     const { history, ...itineraryWithoutHistory } = updatedItinerary
 
-                    return NextResponse.json({ message: itineraryWithoutHistory }, { status: 200 });
+                    return NextResponse.json({ message: itineraryWithoutHistory }, {
+                        status: 200, headers: {
+                            'Access-Control-Allow-Origin': origin || '*',
+                            'Content-Type': 'application/json'
+                        }
+                    });
                 } else {
                     return NextResponse.json({ message: "Itinerary not found" }, { status: 404 });
                 }
@@ -211,9 +217,14 @@ export async function POST(request: NextRequest) {
 
                 const { history, ...itineraryWithoutHistory } = newItinerary
 
-                return NextResponse.json({ message: itineraryWithoutHistory }, { status: 200 });
+                return NextResponse.json({ message: itineraryWithoutHistory }, {
+                    status: 200, headers: {
+                        'Access-Control-Allow-Origin': origin || '*',
+                        'Content-Type': 'application/json'
+                    }
+                });
             }
-        } catch (error:any) {
+        } catch (error: any) {
             console.log(error)
             return NextResponse.json({ message: "Failed to update hotels with images", error }, { status: 500 });
         }

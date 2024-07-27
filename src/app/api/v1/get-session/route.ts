@@ -3,6 +3,7 @@ import { verifySession } from "@/lib/session";
 import { prismadb } from "@/utils/prismadb";
 
 export async function GET(request: NextRequest) {
+    const origin = request.headers.get('origin')
     const session = await verifySession();
     if (!session) {
         return NextResponse.json({ message: "Session not found" }, { status: 404 });
@@ -26,9 +27,14 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ message: "User not found" }, { status: 404 });
         }
 
-        return NextResponse.json({ message: user }, { status: 200 });
+        return NextResponse.json({ message: user }, {
+            status: 200, headers: {
+                'Access-Control-Allow-Origin': origin || '*',
+                'Content-Type': 'application/json'
+            }
+        });
 
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });
     }
 }

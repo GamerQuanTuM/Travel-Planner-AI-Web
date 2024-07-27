@@ -4,6 +4,7 @@ import { prismadb } from "@/utils/prismadb";
 import { createSession } from "@/lib/session";
 
 export async function POST(request: NextRequest) {
+    const origin = request.headers.get('origin')
     const { name, email, password } = await request.json()
 
     try {
@@ -40,7 +41,12 @@ export async function POST(request: NextRequest) {
             session
         }
 
-        return NextResponse.json({ message: user }, { status: 201 })
+        return NextResponse.json({ message: user }, {
+            status: 201, headers: {
+                'Access-Control-Allow-Origin': origin || '*',
+                'Content-Type': 'application/json'
+            }
+        })
 
     } catch (error) {
         return NextResponse.json({ message: error }, { status: 500 })

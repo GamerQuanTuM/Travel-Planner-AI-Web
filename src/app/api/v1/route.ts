@@ -1,20 +1,15 @@
-import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
     const origin = request.headers.get('origin')
     try {
-        cookies().delete('session');
-        return NextResponse.json({ message: "Logout Success" }, {
-            status: 200, 
+        return NextResponse.json({ message: "Hello" }, {
             headers: {
                 'Access-Control-Allow-Origin': origin || '*',
                 'Content-Type': 'application/json'
             }
-        },);
+        })
     } catch (error) {
         return NextResponse.json({ message: error }, { status: 500 })
     }
-
-
 }

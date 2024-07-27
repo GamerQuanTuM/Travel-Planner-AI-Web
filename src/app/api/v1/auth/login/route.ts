@@ -4,7 +4,8 @@ import { prismadb } from "@/utils/prismadb";
 import { createSession } from "@/lib/session";
 
 export async function POST(request: NextRequest) {
-    const { email, password } = await request.json()
+    const { email, password } = await request.json();
+    const origin = request.headers.get('origin')
 
     try {
         const dbUser = await prismadb.user.findFirst({
@@ -34,7 +35,12 @@ export async function POST(request: NextRequest) {
                 session
             }
 
-            return NextResponse.json({ message: user }, { status: 200 })
+            return NextResponse.json({ message: user }, {
+                status: 200, headers: {
+                    'Access-Control-Allow-Origin': origin || '*',
+                    'Content-Type': 'application/json'
+                }
+            })
         } else {
             return NextResponse.json({ message: "Password didn't match" }, { status: 403 })
         }
