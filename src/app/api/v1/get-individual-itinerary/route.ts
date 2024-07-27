@@ -14,7 +14,7 @@ export async function POST(request: Request) {
         const trip = itinerary?.trip
         return NextResponse.json({ message: trip }, { status: 200 })
 
-    } catch (error) {
+    } catch (error:any) {
         console.log(error)
         return NextResponse.json({ message: error }, { status: 500 })
     }

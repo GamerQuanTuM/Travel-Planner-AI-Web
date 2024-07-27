@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         })
 
         return NextResponse.json({ message: itinerary }, { status: 200 });
-    } catch (error) {
+    } catch (error:any) {
         console.error('Error fetching itinerary:', error);
         return NextResponse.json({ message: error }, { status: 500 });
     }

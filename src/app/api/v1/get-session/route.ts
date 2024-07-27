@@ -4,7 +4,9 @@ import { prismadb } from "@/utils/prismadb";
 
 export async function GET(request: NextRequest) {
     const session = await verifySession();
-    if (!session) return null;
+    if (!session) {
+        return NextResponse.json({ message: "Session not found" }, { status: 404 });
+    }
 
     try {
         const user = await prismadb.user.findFirst({
@@ -18,11 +20,15 @@ export async function GET(request: NextRequest) {
                 updatedAt: true,
                 createdAt: true,
             }
-        })
+        });
 
-        return NextResponse.json({ message: user }, { status: 200 })
+        if (!user) {
+            return NextResponse.json({ message: "User not found" }, { status: 404 });
+        }
 
-    } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 })
+        return NextResponse.json({ message: user }, { status: 200 });
+
+    } catch (error:any) {
+        return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });
     }
 }

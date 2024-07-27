@@ -60,19 +60,19 @@ const fetchImages = async (parsedNewTrip: Trip) => {
     const hotelsWithImages = await Promise.all(parsedNewTrip?.hotels?.map(async (hotel) => {
         try {
             hotel.hotelImageUrl = await getImagesFromGoogle(hotel?.hotelName) || hotel.hotelImageUrl;
-        } catch (error) {
+        } catch (error:any) {
             console.error(`Failed to fetch image for hotel ${hotel?.hotelName}:`);
         }
         try {
             hotel.placesNearby = await Promise.all(hotel?.placesNearby?.map(async (place) => {
                 try {
                     place.placeImageUrl = await getImagesFromGoogle(place?.placeName) || place?.placeImageUrl;
-                } catch (error) {
+                } catch (error:any) {
                     console.error(`Failed to fetch image for place ${place?.placeName}:`);
                 }
                 return place;
             }));
-        } catch (error) {
+        } catch (error:any) {
             console.error(`Failed to fetch images for places nearby hotel ${hotel?.hotelName}:`);
         }
         return hotel;
@@ -82,7 +82,7 @@ const fetchImages = async (parsedNewTrip: Trip) => {
         day.placesToVisit = await Promise.all(day.placesToVisit.map(async (place) => {
             try {
                 place.placesImageUrl = await getImagesFromGoogle(place?.placeName) || place.placesImageUrl;
-            } catch (error) {
+            } catch (error:any) {
                 console.error(`Failed to fetch image for place ${place?.placeName}:`);
             }
             return place;
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
 
                 return NextResponse.json({ message: itineraryWithoutHistory }, { status: 200 });
             }
-        } catch (error) {
+        } catch (error:any) {
             console.log(error)
             return NextResponse.json({ message: "Failed to update hotels with images", error }, { status: 500 });
         }
