@@ -5,8 +5,9 @@ export async function GET(request: Request) {
     try {
         return NextResponse.json({ message: "Hello" }, {
             headers: {
-                'Access-Control-Allow-Origin': origin || '*',
-                'Content-Type': 'application/json'
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
             }
         })
     } catch (error) {

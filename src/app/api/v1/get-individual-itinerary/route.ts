@@ -13,12 +13,15 @@ export async function POST(request: Request) {
         })
 
         const trip = itinerary?.trip
-        return NextResponse.json({ message: trip }, { status: 200, headers: {
-            'Access-Control-Allow-Origin': origin || '*',
-            'Content-Type': 'application/json'
-        }})
+        return NextResponse.json({ message: trip }, {
+            status: 200, headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            }
+        })
 
-    } catch (error:any) {
+    } catch (error: any) {
         console.log(error)
         return NextResponse.json({ message: error }, { status: 500 })
     }

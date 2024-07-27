@@ -6,10 +6,11 @@ export async function GET(request: NextRequest) {
     try {
         cookies().delete('session');
         return NextResponse.json({ message: "Logout Success" }, {
-            status: 200, 
+            status: 200,
             headers: {
-                'Access-Control-Allow-Origin': origin || '*',
-                'Content-Type': 'application/json'
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
             }
         },);
     } catch (error) {
