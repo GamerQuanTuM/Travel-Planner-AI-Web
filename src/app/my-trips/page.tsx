@@ -40,7 +40,7 @@ const MyTrips = async () => {
           <div className='mt-5 grid grid-cols-3 gap-5 px-3 py-2'>
             {allTrips?.map((trip, i: number) => (
               <a
-                href={`/trip/${trip?.id}`}
+                // href={`/trip/${trip?.id}`}
                 target='__blank' key={i} className='group enlarge flex flex-col gap-3'>
                 <Image height={500} width={500} src={trip?.cover ?? default_Image} alt='photo' className='w-full h-48 object-cover rounded-t-md' />
                 <div className='rounded-b-md px-3 py-2'>
