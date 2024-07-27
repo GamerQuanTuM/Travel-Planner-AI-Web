@@ -22,9 +22,6 @@ const Login = () => {
         const formData = new FormData(event.currentTarget);
         const password = formData.get("password");
         const email = formData.get("email");
-
-       
-
         setLoading(true)
         try {
             await axiosInstance.post("/auth/login", {
@@ -32,7 +29,6 @@ const Login = () => {
             })
             await refreshSession();
             setLoading(false);
-            router.push("/");
             if (session) {
                 router.push("/");
             }
