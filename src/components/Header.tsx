@@ -8,7 +8,6 @@ import { Button } from './ui/button'
 import { useRouter } from 'next/navigation'
 import { useSession } from '@/context/authContext'
 import { Avatar, AvatarFallback } from './ui/avatar'
-import axios from 'axios'
 import axiosInstance from '@/lib/axiosInstance'
 import { useToast } from './ui/use-toast'
 
@@ -36,7 +35,7 @@ const Header = ({ show = true }: { show?: boolean }) => {
             console.log(error.response.data)
             setError(error.response.data)
             toast({
-                title: error.response.data
+                title: "Something went wrong"
             })
             setLoading(false)
         }
