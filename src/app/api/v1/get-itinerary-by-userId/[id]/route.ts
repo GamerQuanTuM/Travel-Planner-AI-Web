@@ -17,6 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
                 budgetType: true,
                 duration: true,
                 travelOrigin: true,
+                travelType:true
             }
         })
 
