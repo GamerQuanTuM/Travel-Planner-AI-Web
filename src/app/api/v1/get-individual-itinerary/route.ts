@@ -26,7 +26,7 @@ export async function POST(request: Request) {
         })
 
         const trip = itinerary?.trip
-        return NextResponse.json({ message: trip }, {
+        return NextResponse.json({ message: itinerary }, {
             status: 200, headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
