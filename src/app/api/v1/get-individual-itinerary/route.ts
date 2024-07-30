@@ -10,6 +10,19 @@ export async function POST(request: Request) {
             where: {
                 id
             },
+            select: {
+                id: true,
+                trip: true,
+                createdAt: true,
+                updatedAt: true,
+                userId: true,
+                cover: true,
+                destination: true,
+                budgetType: true,
+                duration: true,
+                travelOrigin: true,
+                travelType: true
+            }
         })
 
         const trip = itinerary?.trip
