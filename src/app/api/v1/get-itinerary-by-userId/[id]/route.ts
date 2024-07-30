@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prismadb } from "@/utils/prismadb";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-    const origin = request.headers.get('origin')
     try {
         const itinerary = await prismadb.itinerary.findMany({
             where: {
