@@ -8,6 +8,9 @@ export async function POST(request: NextRequest) {
     const origin = request.headers.get('origin')
 
     try {
+        if (!email || !password) {
+            return NextResponse.json({ message: 'User Credentials missing.' }, { status: 400 })
+        }
         const dbUser = await prismadb.user.findFirst({
             where: {
                 email
