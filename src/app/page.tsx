@@ -5,6 +5,7 @@ import Header from '@/components/Header'
 import Carousel from '@/components/Carousel'
 import Footer from '@/components/Footer'
 import Feedback from '@/components/Feedback'
+import DownloadSection from '@/components/DownloadSection'
 
 export default async function Home() {
   return (
@@ -17,7 +18,10 @@ export default async function Home() {
         <CreateTripNavigateButton />
 
         <div className='mt-10 flex justify-center mx-2'>
-            <Carousel />
+          <Carousel />
+        </div>
+        <div className='mt-10'>
+          <DownloadSection />
         </div>
         <div className='mt-10'>
           <Feedback />
