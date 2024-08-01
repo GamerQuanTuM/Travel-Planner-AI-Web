@@ -5,7 +5,6 @@ import { prismadb } from "@/utils/prismadb";
 export async function POST(req: NextRequest) {
 
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, userId, plan } = await req.json();
-    console.log(plan)
     try {
         const body = razorpay_order_id + "|" + razorpay_payment_id;
         const expectedSignature = crypto
@@ -27,7 +26,13 @@ export async function POST(req: NextRequest) {
                 where: { id: userId },
                 data: { planId: newPlan.id, subscription: plan.toUpperCase() },
             });
-            return NextResponse.json({ message: "Success" }, { status: 200 })
+            return NextResponse.json({ message: "Success" }, {
+                status: 200, headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                }
+            })
         } else {
             return NextResponse.json({ message: "Signature didnt match" }, { status: 400 })
         }

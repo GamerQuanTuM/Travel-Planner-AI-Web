@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GenerationConfig, GoogleGenerativeAI } from "@google/generative-ai"
-import { BudgetType, TravelType } from "@prisma/client";
+import { BudgetType, Subscription, TravelType } from "@prisma/client";
 
 
 import { prismadb } from "@/utils/prismadb";
@@ -93,6 +93,21 @@ const fetchImages = async (parsedNewTrip: Trip) => {
     return { hotelsWithImages, dailyPlanWithImages }
 }
 
+const checkSubscriptionLimit = (tripCount: number, subscription: Subscription) => {
+    switch (subscription) {
+        case Subscription.FREE:
+            return tripCount >= 3 ? "You have reached the maximum limit of 3 itineraries for Free tier." : null;
+        case Subscription.BASIC:
+            return tripCount >= 8 ? "You have reached the maximum limit of 8 itineraries for Basic tier." : null;
+        case Subscription.STANDARD:
+            return tripCount >= 10 ? "You have reached the maximum limit of 10 itineraries for Standard tier." : null;
+        case Subscription.PREMIUM:
+            return tripCount >= 15 ? "You have reached the maximum limit of 15 itineraries for Premium tier." : null;
+        default:
+            return null;
+    }
+};
+
 const getChatSessionSendMessage = async (generationConfig: GenerationConfig | undefined, itinerary: any, prompt: string) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const chatSession = model.startChat({
@@ -117,15 +132,18 @@ export async function POST(request: NextRequest) {
             createdAt: true,
             updatedAt: true,
             name: true,
+            subscription: true
         }
     });
 
     const tripArray = user?.itinerary.length as number
-    console.log(tripArray)
 
-    if (tripArray > 3) {
-        return NextResponse.json({ message: "You have reached the maximum limit of 3 itineraries." }, { status: 403 })
+    const subscriptionMessage = checkSubscriptionLimit(tripArray, user?.subscription as Subscription);
+    if (subscriptionMessage) {
+        return NextResponse.json({ message: subscriptionMessage }, { status: 403 });
     }
+
+
     const travelType = determineTravelType(person);
     const budgetType = determineBudgetType(budget);
 

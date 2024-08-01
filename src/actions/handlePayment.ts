@@ -26,7 +26,7 @@ const handlePayment = async ({ price, selectedPlan, Razorpay, session, router }:
             currency: "INR",
             name: "Travel AI",
             description: `${selectedPlan} for Travel AI`,
-            image: "https://example.com/your_logo",
+            image: "https://firebasestorage.googleapis.com/v0/b/instagram-native-040399.appspot.com/o/travel-ai-logo.png?alt=media&token=24d0cca4-f634-431d-ace8-4284769e84bd",
             order_id: response.data.order.id,
             handler: async function (response: {
                 razorpay_payment_id: string,
@@ -48,21 +48,14 @@ const handlePayment = async ({ price, selectedPlan, Razorpay, session, router }:
 
                     if (data.message === "Success") {
                         router.push("/payment/success?paymentid=" + response.razorpay_payment_id);
-                        const { data } = await axiosInstance.get("/get-session");
-
-
                     }
                 } catch (verifyError: any) {
                     console.error('Payment verification failed', verifyError);
                 }
             },
             prefill: {
-                name: "John Doe",
-                email: "john.doe@example.com",
-                contact: "9999999999",
-            },
-            notes: {
-                address: "Razorpay Corporate Office",
+                name: session?.name,
+                email: session?.email,
             },
             theme: {
                 color: "#3399cc",
@@ -73,7 +66,7 @@ const handlePayment = async ({ price, selectedPlan, Razorpay, session, router }:
         rzp1.open();
 
         rzp1.on('payment.failed', function (response: any) {
-            router.push("/payment/failure")
+            router.push("/payment/failure?paymentid=" + response.error.metadata.payment_id)
             // alert(response.error.code);
             // alert(response.error.description);
             // alert(response.error.source);

@@ -35,12 +35,12 @@ const Subscription: React.FC<Props> = ({ session }) => {
         {
             plan: 'Standard',
             price: 200,
-            features: ['15 itineraries per month', 'Access to standard travel planning features', 'Priority email support']
+            features: ['10 itineraries per month', 'Access to standard travel planning features', 'Priority email support']
         },
         {
             plan: 'Premium',
             price: 500,
-            features: ['50 itineraries per month', 'Access to all travel planning features', '24/7 phone and email support']
+            features: ['15 itineraries per month', 'Access to all travel planning features', '24/7 phone and email support']
         }
     ];
 

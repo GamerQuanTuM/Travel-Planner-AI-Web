@@ -121,7 +121,7 @@ const CreateTrip = () => {
             setLoading(false)
             if (isAxiosError(error) && error.response && error.response.status === 403) {
                 toast({
-                    title: "You have reached the maximum limit of 3 itineraries."
+                    title: error?.response?.data?.message
                 });
             } else {
                 toast({

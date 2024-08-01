@@ -9,16 +9,16 @@ declare module 'react-razorpay' {
         image: string;
         order_id: string;
         handler: (response: any) => void;
-        prefill: {
-            name: string;
-            email: string;
-            contact: string;
+        prefill?: {
+            name?: string;
+            email?: string;
+            contact?: string;
         };
-        notes: {
-            address: string;
+        notes?: {
+            address?: string;
         };
-        theme: {
-            color: string;
+        theme?: {
+            color?: string;
         };
     }
 
