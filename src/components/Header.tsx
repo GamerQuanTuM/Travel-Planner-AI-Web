@@ -58,6 +58,7 @@ const Header = ({ show = true }: { show?: boolean }) => {
                     <div className='flex gap-x-3'>
                         <Button onClick={() => router.push("/create-trip")} className='rounded-full' variant="outline"><span className='text-xl'>+ &nbsp;</span>Create Trip</Button>
                         <Button onClick={() => router.push("/my-trips")} className='rounded-full' variant="outline">My Trips</Button>
+                        <Button onClick={() => router.push("/subscription")} className='rounded-full' variant="outline">Upgrade Plan</Button>
 
                         <Avatar>
                             <AvatarFallback onClick={() => handleLogout()} className='bg-orange-600 text-white text-xl cursor-pointer'>{session?.name?.charAt(0)}</AvatarFallback>

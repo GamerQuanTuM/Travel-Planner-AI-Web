@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
                 name: true,
                 updatedAt: true,
                 createdAt: true,
+                subscription:true
             }
         });
 

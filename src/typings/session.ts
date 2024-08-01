@@ -4,4 +4,5 @@ export interface Session {
     name: string,
     updatedAt: Date,
     createdAt: Date,
+    subscription:"FREE" | "BASIC" | "STANDARD" | "PREMIUM"
 }

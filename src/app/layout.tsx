@@ -4,6 +4,7 @@ import { Poppins } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster"
 import "./globals.css";
 import { Providers } from "@/lib/authProvider";
+import Script from "next/script";
 
 const inter = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -18,15 +19,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Providers>
-          <Toaster />
-          <main>
-            {children}
-          </main>
-        </Providers>
-      </body>
-    </html>
+    <>
+      <html lang="en">
+        <body className={inter.className}>
+          <Providers>
+            <Toaster />
+            <main>
+              {children}
+            </main>
+          </Providers>
+        </body>
+      </html>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js"/>
+    </>
   );
 }

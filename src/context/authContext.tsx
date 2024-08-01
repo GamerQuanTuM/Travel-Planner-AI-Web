@@ -13,7 +13,7 @@ const defaultContext: SessionContextType = {
     session: null,
     loading: true,
     error: null,
-    refreshSession: async () => {},
+    refreshSession: async () => { },
 };
 
 const SessionContext = createContext<SessionContextType>(defaultContext);
@@ -31,8 +31,9 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 setSession(JSON.parse(cachedSession));
             } else {
                 const { data } = await axiosInstance.get("/get-session");
-                setSession(data.message);
-                localStorage.setItem('session', JSON.stringify(data.message));
+                const { subscription, ...rest } = data.message;
+                setSession(rest);
+                localStorage.setItem('session', JSON.stringify(rest));
             }
         } catch (err) {
             setError('Failed to fetch session');

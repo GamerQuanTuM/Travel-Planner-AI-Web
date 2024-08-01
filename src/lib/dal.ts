@@ -18,6 +18,7 @@ export const getSession = cache(async () => {
                 name: true,
                 updatedAt: true,
                 createdAt: true,
+                subscription: true,
             }
         })
 

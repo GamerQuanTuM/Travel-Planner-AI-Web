@@ -26,14 +26,25 @@ enum BudgetType {
   LUXURY
 }
 
+enum Subscription {
+  FREE
+  BASIC
+  STANDARD
+  PREMIUM
+}
+
+
 model User {
-  id        String      @id @default(cuid())
-  email     String      @unique
-  name      String
-  password  String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  itinerary Itinerary[]
+  id           String       @id @default(cuid())
+  email        String       @unique
+  name         String
+  password     String
+  createdAt    DateTime     @default(now())
+  subscription Subscription @default(FREE)
+  updatedAt    DateTime     @updatedAt
+  plan         Plan?        @relation(fields: [planId], references: [id])
+  planId       String?      @unique
+  itinerary    Itinerary[]
 }
 
 model Itinerary {
@@ -58,4 +69,14 @@ model Feedback {
   text      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Plan {
+  id                  String        @id @default(cuid())
+  razorpay_order_id   String
+  razorpay_payment_id String
+  razorpay_signature  String
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  user                User?         @relation
 }
