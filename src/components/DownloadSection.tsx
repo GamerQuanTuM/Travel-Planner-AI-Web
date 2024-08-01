@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TravelAIApk from "@/assets/travel-ai-apk.png"
+import TravelAIApk from "@/assets/travel-ai-barcode.png"
 import Image from 'next/image';
 
 const DownloadSection = () => {
@@ -10,7 +10,7 @@ const DownloadSection = () => {
             <p className="text-gray-600 mb-6 text-center">
                 Get the best experience by downloading our mobile app. Scan the QR code below to get started!
             </p>
-            <Image src={TravelAIApk} alt="Download App QR Code" height={500} width={500} className="w-fit h-80 mb-4 rounded-xl border-2 border-black object-contain p-1" />
+            <Image src={TravelAIApk} alt="Download App QR Code" height={500} width={500} className="w-fit h-80 mb-4 rounded-xl border-2 border-black object-contain" />
         </div>
     );
 };
